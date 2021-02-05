@@ -6,3 +6,4 @@
 
 .env
 src/secret.h
+.vscode/
