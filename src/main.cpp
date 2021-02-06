@@ -49,11 +49,13 @@ void setup() {
 
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
+    // mode must be UPDATE_MODE_GLR16 when draw lines
     canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
-
+    MYWIFI::disconnect();
 }
 
 void loop() {
-    delay(1000);
-    M5.shutdown(60);
+    // need delay because drawing canvas is too slow
+    delay(1001);
+    M5.shutdown(60 * 60);
 }

@@ -7,7 +7,6 @@ void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
     // bar
     canvas->drawFastHLine(0, 32, width, 27);
     canvas->drawFastVLine(44, 32, width, 27);
-    canvas->drawLine(0, 0, 333, 333, 20);
 
 
     // battery percentage calculation from
