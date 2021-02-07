@@ -2,6 +2,7 @@
 #include "M5EPD_Canvas.h"
 #include "M5EPD.h"
 #include "M5EPD_Driver.h"
+#include <ArduinoJson.h>
 
 
 #include "secret.h"
@@ -53,8 +54,9 @@ void setup() {
     // となる。
     // char buf[1024 * 1];
     Serial.print("before auth");
-    GoogleAuthorization::getAccessToken(config::GOOGLE_REFRESH_TOKEN);
-
+    DynamicJsonDocument doc = GoogleAuthorization::getAccessToken(config::GOOGLE_REFRESH_TOKEN);
+    const char *accessToken = doc["access_token"];
+    Serial.print(accessToken);
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
     // mode must be UPDATE_MODE_GLR16 when draw lines

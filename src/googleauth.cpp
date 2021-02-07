@@ -5,7 +5,7 @@
 
 const char *TOKEN_ENDPOINT="https://oauth2.googleapis.com/token";
 
-void GoogleAuthorization::getAccessToken(const char *refreshToken) {
+DynamicJsonDocument GoogleAuthorization::getAccessToken(const char *refreshToken) {
 
     MyHTTPClient client;
     KeyValues headers(5);
@@ -21,5 +21,7 @@ void GoogleAuthorization::getAccessToken(const char *refreshToken) {
 
     String res = client.post(TOKEN_ENDPOINT, &headers, &data);
 
-    Serial.print(res);
+    DynamicJsonDocument doc(1000);
+    deserializeJson(doc, res);
+    return doc;
 }
