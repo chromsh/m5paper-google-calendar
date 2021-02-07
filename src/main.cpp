@@ -47,7 +47,7 @@ void setup() {
 
     // draw status bar
     StatusBar::draw(&canvas, M5EPD_PANEL_H);
-    // Google 
+    // Google
     // memo buf[1024 * 10]をgetAccessTokenの引数に戻り値として渡すと、
     // ***ERROR*** A stack overflow in task loopTask has been detected.
     // となる。
