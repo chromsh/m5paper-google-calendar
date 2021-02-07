@@ -6,7 +6,6 @@ void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
 
     // bar
     canvas->drawFastHLine(0, 32, width, 27);
-    canvas->drawFastVLine(44, 32, width, 27);
 
 
     // battery percentage calculation from
@@ -33,9 +32,5 @@ void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
 
     char battString[32];
     sprintf(battString, "%.1f %%", battery * 100);
-    canvas->drawString(battString, width - 250, 0);
-    Serial.print(vol);
-    Serial.print(",");
-    Serial.print(battery);
-
+    canvas->drawString(battString, width - 150, 0);
 }

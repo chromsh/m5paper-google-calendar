@@ -1,5 +1,7 @@
 #pragma once
 #include <time.h>
+#include <vector>
+#include <Arduino.h>
 
 // single event
 class GoogleCalendarEvent {
@@ -31,8 +33,15 @@ private:
 };
 
 
+// calendar list
+class GoogleCalendarListItem {
+public:
+    String id;
+    String summary;
+};
 
 class GoogleCalendar {
 public:
     static GoogleCalendarEventList *getEvents(const char *accessToken, const char *calendarId, struct tm *start, struct tm *end);
+    static std::vector<GoogleCalendarListItem> getCalendars(const char *accessToken);
 };

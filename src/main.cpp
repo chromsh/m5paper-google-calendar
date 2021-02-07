@@ -28,18 +28,13 @@ void setup() {
     canvas.createCanvas(M5EPD_PANEL_H, M5EPD_PANEL_W);
     canvas.setTextSize(3);
     canvas.drawString("jhello", int(M5EPD_PANEL_W/2), int(M5EPD_PANEL_W));
-    canvas.drawString("xhello", 0, 0);
-    canvas.drawString("100x100", 100, 100);
-    canvas.drawString("200x200", 200, 200);
-    canvas.drawString("400x200", 400, 200);
-    canvas.drawString("200x400", 200, 400);
-    canvas.drawString("200x600", 200, 600);
-    canvas.drawString("200x800", 200, 800);
+    canvas.drawString("", 0, 0);
+    canvas.drawString("Loading calendar list", 0, 200);
     //canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
 
     bool connected = MYWIFI::connect(config::WIFI_SSID, config::WIFI_PASSWORD, 10);
-    long posX = random(0, 100);
-    long posY = random(0, 200);
+    long posX = 10;
+    long posY = 100;
     if (connected) {
         canvas.drawString("wifi connected", posX, posY);
     }
@@ -59,6 +54,13 @@ void setup() {
     const char *accessToken = doc["access_token"];
     Serial.println(accessToken);
 
+
+    // calendar list
+    auto calendarList = GoogleCalendar::getCalendars(accessToken);
+    for (int i = 0 ; i < calendarList.size() ; i++) {
+        Serial.println(calendarList[i].id);
+    }
+
     // get events
     struct tm start = {0};
     struct tm end = {0};
@@ -67,7 +69,7 @@ void setup() {
     const char *fmt = "%Y-%m-%dT%H:%M:%S";
     strptime("2021-02-06T15:00:00", fmt, &start);
     strptime("2021-02-07T15:00:00", fmt, &end);
-    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, "***", &start, &end);
+    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, calendarList[0].id.c_str(), &start, &end);
 
     for (int i = 0 ; i < events->length() ; i++) {
         auto *event = events->get(i);

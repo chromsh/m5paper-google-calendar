@@ -87,6 +87,37 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
     return eventList;
 }
 
+std::vector<GoogleCalendarListItem> GoogleCalendar::getCalendars(const char *accessToken) {
+    std::vector<GoogleCalendarListItem> calendars;
+
+    MyHTTPClient client;
+    KeyValues headers(1);
+    String bearer = "Bearer ";
+    bearer += accessToken;
+    headers.add("Authorization", bearer.c_str());
+
+    String res = client.get(GOOGLE_CALENDAR_LIST, &headers, NULL);
+
+    if (res == "") {
+        return calendars;
+    }
+
+    Serial.println(res);
+
+    DynamicJsonDocument doc(5000);
+    deserializeJson(doc, res);
+    JsonArray items = doc["items"].as<JsonArray>();
+    for (int i = 0 ; i < items.size() ; i++) {
+        GoogleCalendarListItem item;
+        const char *id = items[i]["id"];
+        item.id = id;
+        const char *summary = items[i]["summary"];
+        item.summary = summary;
+        calendars.push_back(item);
+    }
+    return calendars;
+}
+
 
 String timeToRFC3339(struct tm *tm) {
     char buf[30];
