@@ -20,6 +20,7 @@ public:
     KeyValues(int maxLen);
     ~KeyValues();
     bool add(const char *key, const char *val);
+    bool add(const char *key, String val);
     KeyValue *get (int pos) const;
     int length() const {return _length;};
 
@@ -31,6 +32,7 @@ private:
 
 class MyHTTPClient {
 public:
+    String get(const char *url, const KeyValues *headers, const KeyValues *data);
     String post(const char *url, const KeyValues *headers, const KeyValues *data);
 
 };

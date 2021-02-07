@@ -9,6 +9,7 @@
 #include "mywifi.h"
 #include "statusbar.h"
 #include "google/auth.h"
+#include "google/calendar.h"
 
 M5EPD_Canvas canvas(&M5.EPD);
 
@@ -56,7 +57,21 @@ void setup() {
     Serial.print("before auth");
     DynamicJsonDocument doc = GoogleAuthorization::getAccessToken(config::GOOGLE_REFRESH_TOKEN);
     const char *accessToken = doc["access_token"];
-    Serial.print(accessToken);
+    Serial.println(accessToken);
+
+    // get events
+    struct tm start = {0};
+    struct tm end = {0};
+    const char *fmt = "%Y-%m-%dT%H:%M:%S.%z";
+    strptime("2021-02-07T00:00:00+0900", fmt, &start);
+    strptime("2021-02-08T00:00:00+0900", fmt, &end);
+    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, &start, &end);
+
+    for (int i = 0 ; i < events->length() ; i++) {
+        auto *event = events->get(i);
+        Serial.println(event->summary());
+    }
+    delete[] events;
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
     // mode must be UPDATE_MODE_GLR16 when draw lines

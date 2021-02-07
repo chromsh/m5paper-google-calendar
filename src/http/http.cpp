@@ -56,12 +56,61 @@ bool KeyValues::add(const char *key, const char *val) {
     return true;
 }
 
+bool KeyValues::add(const char *key, String val) {
+    if (_maxLength == _length) {
+        return false;
+    }
+    char buf[128];
+    val.toCharArray(buf, sizeof(buf));
+    KeyValue header(key, buf);
+    _kvs[_length] = header;
+    _length++;
+    return true;
+}
+
+
 KeyValue *KeyValues::get(int pos) const {
     return &_kvs[pos];
 };
 
 
 //////////////////////
+// MyHTTPClient class
+//////////////////////
+String MyHTTPClient::get(const char *url, const KeyValues *headers, const KeyValues *data) {
+    HTTPClient client;
+    String params = "";
+    if (data != NULL) {
+        params  = "?";
+        for (int i = 0 ; i < data->length() ; i++) {
+            KeyValue *kv = data->get(i);
+            params += urlEncode(kv->key()) + "=" + urlEncode(kv->val());
+            if (i < data->length() - 1) {
+                params += "&";
+            }
+        }
+    }
+
+    client.begin(url + params);
+
+    if (headers != NULL) {
+        for (int i = 0 ; i < headers->length() ; i++) {
+            KeyValue *kv = headers->get(i);
+            client.addHeader(kv->key(), kv->val());
+        }
+    }
+
+    int code = client.GET();
+    if (code == HTTP_CODE_OK) {
+        return client.getString();
+    }
+    else {
+        Serial.print("http get error");
+        Serial.print(client.getString());
+    }
+
+    return "";
+}
 String MyHTTPClient::post(const char *url, const KeyValues *headers, const KeyValues *data) {
     HTTPClient client;
     client.begin(url);
@@ -82,9 +131,6 @@ String MyHTTPClient::post(const char *url, const KeyValues *headers, const KeyVa
             }
         }
     }
-    //Serial.print("\n");
-    //Serial.print(body);
-    //Serial.print("\n");
 
     int code = client.POST(body);
     if (code == HTTP_CODE_OK) {
