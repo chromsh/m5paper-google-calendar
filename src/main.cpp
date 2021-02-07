@@ -8,7 +8,7 @@
 #include "secret.h"
 #include "mywifi.h"
 #include "statusbar.h"
-#include "googleauth.h"
+#include "google/auth.h"
 
 M5EPD_Canvas canvas(&M5.EPD);
 
