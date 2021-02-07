@@ -62,16 +62,19 @@ void setup() {
     // get events
     struct tm start = {0};
     struct tm end = {0};
-    const char *fmt = "%Y-%m-%dT%H:%M:%S.%z";
-    strptime("2021-02-07T00:00:00+0900", fmt, &start);
-    strptime("2021-02-08T00:00:00+0900", fmt, &end);
-    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, &start, &end);
+    // memo : strptime can't parse timezone.
+    //        JST = UTC+9, 00:00:00 = 15:00:00 in UTC
+    const char *fmt = "%Y-%m-%dT%H:%M:%S";
+    strptime("2021-02-06T15:00:00", fmt, &start);
+    strptime("2021-02-07T15:00:00", fmt, &end);
+    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, "***", &start, &end);
 
     for (int i = 0 ; i < events->length() ; i++) {
         auto *event = events->get(i);
+        Serial.println("---- ---- ----");
         Serial.println(event->summary());
     }
-    delete[] events;
+    delete events;
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
     // mode must be UPDATE_MODE_GLR16 when draw lines

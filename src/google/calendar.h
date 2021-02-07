@@ -34,5 +34,5 @@ private:
 
 class GoogleCalendar {
 public:
-    static GoogleCalendarEventList *getEvents(const char *accessToken, struct tm *start, struct tm *end);
+    static GoogleCalendarEventList *getEvents(const char *accessToken, const char *calendarId, struct tm *start, struct tm *end);
 };
