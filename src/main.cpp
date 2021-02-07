@@ -34,7 +34,7 @@ void setup() {
     canvas.drawString("200x800", 200, 800);
     //canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
 
-    bool connected = MYWIFI::connect(WIFI_SSID, WIFI_PASSWORD, 10);
+    bool connected = MYWIFI::connect(config::WIFI_SSID, config::WIFI_PASSWORD, 10);
     long posX = random(0, 100);
     long posY = random(0, 200);
     if (connected) {

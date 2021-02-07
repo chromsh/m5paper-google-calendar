@@ -5,5 +5,5 @@
 .vscode/ipch
 
 .env
-src/secret.h
+src/secret.cpp
 .vscode/
