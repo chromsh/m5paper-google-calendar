@@ -7,6 +7,7 @@
 #include "secret.h"
 #include "mywifi.h"
 #include "statusbar.h"
+#include "googleauth.h"
 
 M5EPD_Canvas canvas(&M5.EPD);
 
@@ -46,6 +47,13 @@ void setup() {
 
     // draw status bar
     StatusBar::draw(&canvas, M5EPD_PANEL_H);
+    // Google 
+    // memo buf[1024 * 10]をgetAccessTokenの引数に戻り値として渡すと、
+    // ***ERROR*** A stack overflow in task loopTask has been detected.
+    // となる。
+    // char buf[1024 * 1];
+    Serial.print("before auth");
+    GoogleAuthorization::getAccessToken(config::GOOGLE_REFRESH_TOKEN);
 
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);

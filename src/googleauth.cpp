@@ -5,8 +5,7 @@
 
 const char *TOKEN_ENDPOINT="https://oauth2.googleapis.com/token";
 
-void GoogleAuthorization::getAccessToken(const char *refreshToken, char *out) {
-    // TODO ここから
+void GoogleAuthorization::getAccessToken(const char *refreshToken) {
 
     MyHTTPClient client;
     KeyValues headers(5);

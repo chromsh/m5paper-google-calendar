@@ -77,8 +77,14 @@ String MyHTTPClient::post(const char *url, const KeyValues *headers, const KeyVa
         for (int i = 0 ; i < data->length() ; i++) {
             KeyValue *kv = data->get(i);
             body += urlEncode(kv->key()) + "=" + urlEncode(kv->val());
+            if (i < data->length() - 1) {
+                body += "&";
+            }
         }
     }
+    //Serial.print("\n");
+    //Serial.print(body);
+    //Serial.print("\n");
 
     int code = client.POST(body);
     if (code == HTTP_CODE_OK) {
