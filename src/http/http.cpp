@@ -165,6 +165,7 @@ String urlEncode(const char *val) {
         || ('_' == c)
         || ('.' == c)
         || ('*' == c)
+        || ('/' == c)
         || (':' == c)){
 			buf += c;
 		} else {
