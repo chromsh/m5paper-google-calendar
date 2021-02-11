@@ -88,22 +88,17 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
         return NULL;
     }
 
-    Serial.println(res);
+    //Serial.println(res);
 
     DynamicJsonDocument doc(5000);
     deserializeJson(doc, res);
    
     GoogleCalendarEventList *eventList = new GoogleCalendarEventList(MAX_EVENT_COUNT);
     JsonArray items = doc["items"].as<JsonArray>();
-    Serial.println("items = ");
-    Serial.println(items.size());
     for (int i = 0 ; i < items.size() ; i++) {
         const char *summary = items[i]["summary"];
-        Serial.println(summary);
         const char *start = items[i]["start"]["dateTime"];
-        Serial.println(start);
         const char *end = items[i]["end"]["dateTime"];
-        Serial.println(end);
         GoogleCalendarEvent event(summary, start, end);
 
         eventList->add(event);
@@ -127,7 +122,7 @@ std::vector<GoogleCalendarListItem> GoogleCalendar::getCalendars(const char *acc
         return calendars;
     }
 
-    Serial.println(res);
+    //Serial.println(res);
 
     DynamicJsonDocument doc(5000);
     deserializeJson(doc, res);

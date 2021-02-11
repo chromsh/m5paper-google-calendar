@@ -14,6 +14,9 @@
 
 // if you need to use font.ttf define USE_SD
 #define USE_SD
+const char *NTP_SERVER = "ntp.nict.jp";
+const long GMT_OFFSET_SEC = 60 * 60 * 9; // JST
+const int DAYLIGHT_OFFSET_SEC = 0;
 
 M5EPD_Canvas canvas(&M5.EPD);
 
@@ -41,20 +44,16 @@ void setup() {
     canvas.createCanvas(M5EPD_PANEL_H, M5EPD_PANEL_W);
     canvas.createRender(24);
     canvas.setTextSize(24);
-    canvas.drawString("jhello", int(M5EPD_PANEL_W/2), int(M5EPD_PANEL_W));
-    canvas.drawString("", 0, 0);
-    canvas.drawString("Loading calendar list", 0, 200);
     //canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
 
     bool connected = MYWIFI::connect(config::WIFI_SSID, config::WIFI_PASSWORD, 10);
-    long posX = 10;
-    long posY = 100;
-    if (connected) {
-        canvas.drawString("wifi connected", posX, posY);
+    if (!connected) {
+        canvas.drawString("wifi connect failed", 0, M5EPD_PANEL_W / 2);
+        canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
+        return;
     }
-    else {
-        canvas.drawString("wifi connected", posX, posY);
-    }
+    // time sync
+    configTime(GMT_OFFSET_SEC, DAYLIGHT_OFFSET_SEC, NTP_SERVER);
 
     // draw status bar
     StatusBar::draw(&canvas, M5EPD_PANEL_H);
@@ -83,8 +82,10 @@ void setup() {
     // memo : strptime can't parse timezone.
     //        JST = UTC+9, 00:00:00 = 15:00:00 in UTC
     const char *fmt = "%Y-%m-%dT%H:%M:%S";
-    strptime("2021-02-06T15:00:00", fmt, &start);
-    strptime("2021-02-07T15:00:00", fmt, &end);
+    //strptime("2021-02-06T15:00:00", fmt, &start);
+    //strptime("2021-02-07T15:00:00", fmt, &end);
+    strptime("2021-02-07T00:00:00", fmt, &start);
+    strptime("2021-02-08T00:00:00", fmt, &end);
     GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, config::GOOGLE_CALENDAR_ID, &start, &end);
 
     int dy = 100;
@@ -99,7 +100,9 @@ void setup() {
         dy += 30;
         // title
         canvas.drawString(event->summary(), 30, dy);
-        dy += 30;
+        dy += 35;
+        canvas.drawFastHLine(0, dy, M5EPD_PANEL_H, 31);
+        dy += 5;
     }
     delete events;
 
@@ -107,6 +110,9 @@ void setup() {
     // mode must be UPDATE_MODE_GLR16 when draw lines
     canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
     MYWIFI::disconnect();
+    Serial.println(" now time ");
+    int utime = time(NULL);
+    Serial.println(String("") + utime);
 }
 
 void loop() {

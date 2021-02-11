@@ -30,7 +30,18 @@ void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
         battery = 1;
     }
 
+    int margin_top = 5;
     char battString[32];
-    sprintf(battString, "%.1f %%", battery * 100);
-    canvas->drawString(battString, width - 150, 0);
+    sprintf(battString, "batt: %.1f %%", battery * 100);
+    canvas->drawString(battString, width - 140, margin_top);
+
+    // time string
+    struct tm now;
+    bool succeeded = getLocalTime(&now);
+    if (!succeeded) {
+        Serial.println("getLocalTime() failed");
+    }
+    char buf[30];
+    strftime(buf, sizeof(buf)-1, "%Y-%m-%d %H:%M:%S", &now);
+    canvas->drawString(buf, 5, margin_top);
 }

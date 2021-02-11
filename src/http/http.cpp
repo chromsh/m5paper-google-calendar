@@ -113,15 +113,15 @@ String MyHTTPClient::get(const char *url, const KeyValues *headers, const KeyVal
 }
 String MyHTTPClient::post(const char *url, const KeyValues *headers, const KeyValues *data) {
     HTTPClient client;
-    Serial.println(url);
+    //Serial.println(url);
     client.begin(url);
 
     if (headers != NULL) {
         for (int i = 0 ; i < headers->length() ; i++) {
             KeyValue *kv = headers->get(i);
             client.addHeader(kv->key(), kv->val());
-            Serial.println("---------- header ---------");
-            Serial.println(kv->val());
+            //Serial.println("---------- header ---------");
+            //Serial.println(kv->val());
         }
     }
     String body;
