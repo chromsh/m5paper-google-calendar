@@ -33,8 +33,8 @@ String GoogleCalendarEvent::startEndDateTimePeriodString() {
     // YYYY-MM-DD
     String year = start.substring(0, 10);
 
-    String startTime = start.substring(12, 16);
-    String endTime = end.substring(12, 16);
+    String startTime = start.substring(11, 16);
+    String endTime = end.substring(11, 16);
 
     return year + " " + startTime + " - " + endTime;
 }
@@ -43,8 +43,8 @@ String GoogleCalendarEvent::startEndDateTimePeriodString() {
 String GoogleCalendarEvent::startEndTimePeriodString() {
     String start = String(_start);
     String end = String(_end);
-    String startTime = start.substring(12, 16);
-    String endTime = end.substring(12, 16);
+    String startTime = start.substring(11, 16);
+    String endTime = end.substring(11, 16);
 
     return startTime + " - " + endTime;
 }
@@ -76,12 +76,16 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
     headers.add("Authorization", bearer.c_str());
     Serial.println(bearer);
 
-    KeyValues data(3);
+    KeyValues data(6);
     data.add("timeMin", timeToRFC3339(start));
     data.add("timeMax", timeToRFC3339(end));
     data.add("maxResults", String(MAX_EVENT_COUNT));
+    data.add("orderBy", "startTime");
+    data.add("singleEvents", "true");
+    //data.add("timeZone", "Asia/Tokyo");
 
     String url = GOOGLE_CALENDAR_EVENT_LIST_PREFIX + String(calendarId) + GOOGLE_CALENDAR_EVENT_LIST_POSTFIX;
+    Serial.println(url);
     String res = client.get(url.c_str(), &headers, &data);
 
     if (res == "") {
