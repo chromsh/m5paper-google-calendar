@@ -88,7 +88,7 @@ void setup() {
     strptime("2021-02-08T00:00:00", fmt, &end);
     GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, config::GOOGLE_CALENDAR_ID, &start, &end);
 
-    int dy = 100;
+    int dy = StatusBar::height() + 10;
     for (int i = 0 ; i < events->length() ; i++) {
         auto *event = events->get(i);
         Serial.println("---- ---- ----");

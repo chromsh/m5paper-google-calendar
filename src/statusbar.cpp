@@ -5,7 +5,9 @@
 void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
 
     // bar
-    canvas->drawFastHLine(0, 32, width, 27);
+    canvas->drawFastHLine(0, StatusBar::height() -2, width, 31);
+    canvas->drawFastHLine(0, StatusBar::height() -1, width, 31);
+    canvas->drawFastHLine(0, StatusBar::height(), width, 31);
 
 
     // battery percentage calculation from
@@ -44,4 +46,8 @@ void StatusBar::draw(M5EPD_Canvas *canvas, long width) {
     char buf[30];
     strftime(buf, sizeof(buf)-1, "%Y-%m-%d %H:%M:%S", &now);
     canvas->drawString(buf, 5, margin_top);
+}
+
+int StatusBar::height() {
+    return 34;
 }
