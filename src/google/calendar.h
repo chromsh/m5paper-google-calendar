@@ -10,14 +10,20 @@ public:
     const char *summary();
     const char *start();
     const char *end();
+    // YYYY-MM-DD hh:mm - hh:mm
+    String startEndDateTimePeriodString();
+    // hh:mm - hh:mm
+    String startEndTimePeriodString();
 private:
     // fixed length
     char _summary[200];
+    // YYYY-MM-DDThh:mm:ss+HH:MM (RFC3339)
     char _start[30];
     char _end[30];
 };
 
 // event list
+// TODO: rewrite with std::vector
 class GoogleCalendarEventList {
 public:
     GoogleCalendarEventList(int maxLength);

@@ -2,14 +2,18 @@
 #include "M5EPD_Canvas.h"
 #include "M5EPD.h"
 #include "M5EPD_Driver.h"
+//#include "binaryttf.h"
 #include <ArduinoJson.h>
 
 
-#include "secret.h"
+#include "config.h"
 #include "mywifi.h"
 #include "statusbar.h"
 #include "google/auth.h"
 #include "google/calendar.h"
+
+// if you need to use font.ttf define USE_SD
+#define USE_SD
 
 M5EPD_Canvas canvas(&M5.EPD);
 
@@ -22,11 +26,21 @@ void setup() {
     M5.EPD.Clear(true);
     M5.RTC.begin();
     M5.BatteryADCBegin();
-    delay(500);
+    //delay(500);
+#ifdef USE_SD
+    Serial.print("----- loading SD font.ttf ---------");
+    esp_err_t err  = canvas.loadFont("/font.ttf", SD);
+    Serial.print(err);
+    if (err != ESP_OK) {
+        Serial.print("font load error!!");
+        return;
+    }
+#endif
 
     // 縦向きにしたので、x が 画面のheight, y が 画面のwidthになる
     canvas.createCanvas(M5EPD_PANEL_H, M5EPD_PANEL_W);
-    canvas.setTextSize(3);
+    canvas.createRender(24);
+    canvas.setTextSize(24);
     canvas.drawString("jhello", int(M5EPD_PANEL_W/2), int(M5EPD_PANEL_W));
     canvas.drawString("", 0, 0);
     canvas.drawString("Loading calendar list", 0, 200);
@@ -56,10 +70,12 @@ void setup() {
 
 
     // calendar list
-    auto calendarList = GoogleCalendar::getCalendars(accessToken);
-    for (int i = 0 ; i < calendarList.size() ; i++) {
-        Serial.println(calendarList[i].id);
-    }
+    //auto calendarList = GoogleCalendar::getCalendars(accessToken);
+    //for (int i = 0 ; i < calendarList.size() ; i++) {
+    //    Serial.println(calendarList[i].id);
+    //}
+    //// use fierst calendar id
+    //String showCalendarID = calendarList[0].id;
 
     // get events
     struct tm start = {0};
@@ -69,12 +85,21 @@ void setup() {
     const char *fmt = "%Y-%m-%dT%H:%M:%S";
     strptime("2021-02-06T15:00:00", fmt, &start);
     strptime("2021-02-07T15:00:00", fmt, &end);
-    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, calendarList[0].id.c_str(), &start, &end);
+    GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, config::GOOGLE_CALENDAR_ID, &start, &end);
 
+    int dy = 100;
     for (int i = 0 ; i < events->length() ; i++) {
         auto *event = events->get(i);
         Serial.println("---- ---- ----");
         Serial.println(event->summary());
+        // time
+        //canvas.drawString(event->start(), 10, dy);
+        //canvas.drawString(event->end(), 200 + 10, dy);
+        canvas.drawString(event->startEndDateTimePeriodString(), 10, dy);
+        dy += 30;
+        // title
+        canvas.drawString(event->summary(), 30, dy);
+        dy += 30;
     }
     delete events;
 

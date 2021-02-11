@@ -24,6 +24,31 @@ const char *GoogleCalendarEvent::end() {
     return _end;
 }
 
+// YYYY-MM-DD hh:mm - hh:mm
+String GoogleCalendarEvent::startEndDateTimePeriodString() {
+    // YYYY-MM-DDThh:mm:ss+HH:MM (RFC3339)
+    String start = String(_start);
+    String end = String(_end);
+
+    // YYYY-MM-DD
+    String year = start.substring(0, 10);
+
+    String startTime = start.substring(12, 16);
+    String endTime = end.substring(12, 16);
+
+    return year + " " + startTime + " - " + endTime;
+}
+
+// hh:mm - hh:mm
+String GoogleCalendarEvent::startEndTimePeriodString() {
+    String start = String(_start);
+    String end = String(_end);
+    String startTime = start.substring(12, 16);
+    String endTime = end.substring(12, 16);
+
+    return startTime + " - " + endTime;
+}
+
 
 GoogleCalendarEventList::GoogleCalendarEventList(int maxLength) : _length(0), _maxLength(maxLength) {
     _events = new GoogleCalendarEvent*[maxLength];

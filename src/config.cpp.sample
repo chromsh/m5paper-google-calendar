@@ -1,0 +1,17 @@
+#include "config.h"
+
+const char *config::WIFI_SSID="";
+const char *config::WIFI_PASSWORD="";
+
+// get with tools/get-access-token.sh
+const char *config::GOOGLE_REFRESH_TOKEN="";
+
+// you need to create your own google calendar app
+// https://docs.simplecalendar.io/google-api-key/
+// you need to add oauth2.0 client id
+// app type is "TVs & limited-input devices"
+const char *config::GOOGLE_APP_CLIENT_ID="";
+const char *config::GOOGLE_APP_CLIENT_SECRET="";
+
+// your calendar id (maybe mail address)
+const char *config::GOOGLE_CALENDAR_ID="";

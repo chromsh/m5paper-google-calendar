@@ -1,6 +1,6 @@
 #include "auth.h"
 #include "http/http.h"
-#include "secret.h"
+#include "config.h"
 
 
 const char *TOKEN_ENDPOINT="https://oauth2.googleapis.com/token";
