@@ -17,6 +17,7 @@
 const char *NTP_SERVER = "ntp.nict.jp";
 const long GMT_OFFSET_SEC = 60 * 60 * 9; // JST
 const int DAYLIGHT_OFFSET_SEC = 0;
+void generateCalendarStartEnd(struct tm *start, struct tm *end);
 
 M5EPD_Canvas canvas(&M5.EPD);
 
@@ -84,8 +85,9 @@ void setup() {
     const char *fmt = "%Y-%m-%dT%H:%M:%S";
     //strptime("2021-02-06T15:00:00", fmt, &start);
     //strptime("2021-02-07T15:00:00", fmt, &end);
-    strptime("2021-02-07T00:00:00", fmt, &start);
-    strptime("2021-02-08T00:00:00", fmt, &end);
+    //strptime("2021-02-07T00:00:00", fmt, &start);
+    //strptime("2021-02-08T00:00:00", fmt, &end);
+    generateCalendarStartEnd(&start, &end);
     GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, config::GOOGLE_CALENDAR_ID, &start, &end);
 
     int dy = StatusBar::height() + 10;
@@ -96,13 +98,23 @@ void setup() {
         // time
         //canvas.drawString(event->start(), 10, dy);
         //canvas.drawString(event->end(), 200 + 10, dy);
-        canvas.drawString(event->startEndDateTimePeriodString(), 10, dy);
+        if (event->isPeriod()) {
+            // 期間予定
+            canvas.drawString(event->startEndDatePeriodString(), 10, dy);
+        }
+        else {
+            // 通常予定
+            canvas.drawString(event->startEndDateTimePeriodString(), 10, dy);
+        }
         dy += 30;
         // title
         canvas.drawString(event->summary(), 30, dy);
         dy += 35;
         canvas.drawFastHLine(0, dy, M5EPD_PANEL_H, 31);
         dy += 5;
+    }
+    if (events->length() == 0) {
+        canvas.drawString("NO schedules", 10, dy);
     }
     delete events;
 
@@ -119,4 +131,21 @@ void loop() {
     // need delay because drawing canvas is too slow
     delay(1001);
     M5.shutdown(60 * 60);
+}
+
+void generateCalendarStartEnd(struct tm *start, struct tm *end) {
+    struct tm now;
+    getLocalTime(&now);
+
+    // start = 00:00
+    *start = now;
+    start->tm_sec = 0;
+    start->tm_min = 0;
+    start->tm_hour = 0;
+
+    // end = 23:59:59
+    *end = now;
+    end->tm_sec = 59;
+    end->tm_min = 59;
+    end->tm_hour = 23;
 }

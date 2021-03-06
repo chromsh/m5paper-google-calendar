@@ -6,20 +6,25 @@
 // single event
 class GoogleCalendarEvent {
 public:
-    GoogleCalendarEvent(const char *summary, const char *start, const char *end);
+    GoogleCalendarEvent(const char *summary, const char *start, const char *end, bool isPeriod);
     const char *summary();
     const char *start();
     const char *end();
+    bool isPeriod();
     // YYYY-MM-DD hh:mm - hh:mm
     String startEndDateTimePeriodString();
+    // YYYY-MM-DD - YYYY-MM-DD
+    String startEndDatePeriodString();
     // hh:mm - hh:mm
     String startEndTimePeriodString();
 private:
     // fixed length
     char _summary[200];
     // YYYY-MM-DDThh:mm:ss+HH:MM (RFC3339)
+    // YYYY-MM-DD (if isPeriod = true)
     char _start[30];
     char _end[30];
+    bool _isPeriod;
 };
 
 // event list

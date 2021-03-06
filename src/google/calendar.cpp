@@ -9,10 +9,14 @@ const char *GOOGLE_CALENDAR_EVENT_LIST_PREFIX = "https://www.googleapis.com/cale
 const char *GOOGLE_CALENDAR_EVENT_LIST_POSTFIX = "/events";
 String timeToRFC3339(struct tm *tm) ;
 
-GoogleCalendarEvent::GoogleCalendarEvent(const char *summary, const char *start, const char *end) {
+GoogleCalendarEvent::GoogleCalendarEvent(const char *summary, const char *start, const char *end, bool isPeriod) {
     strncpy(_summary, summary, sizeof(_summary) -1);
     strncpy(_start, start, sizeof(_start) -1);
     strncpy(_end, end, sizeof(_end) -1);
+    _isPeriod = isPeriod;
+}
+bool GoogleCalendarEvent::isPeriod() {
+    return _isPeriod;
 }
 const char *GoogleCalendarEvent::summary() {
     return _summary;
@@ -39,6 +43,12 @@ String GoogleCalendarEvent::startEndDateTimePeriodString() {
     return year + " " + startTime + " - " + endTime;
 }
 
+// YYYY-MM-DD - YYYY-MM-DD
+// only if isPeriod() == true
+String GoogleCalendarEvent::startEndDatePeriodString() {
+    return String(_start) + " - " + _end;
+}
+
 // hh:mm - hh:mm
 String GoogleCalendarEvent::startEndTimePeriodString() {
     String start = String(_start);
@@ -60,7 +70,7 @@ bool GoogleCalendarEventList::add(GoogleCalendarEvent &event) {
     if (_length == _maxLength) {
         return false;
     }
-    _events[_length] = new GoogleCalendarEvent(event.summary(), event.start(), event.end());
+    _events[_length] = new GoogleCalendarEvent(event.summary(), event.start(), event.end(), event.isPeriod());
     _length++;
     return true;
 }
@@ -100,10 +110,50 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
     GoogleCalendarEventList *eventList = new GoogleCalendarEventList(MAX_EVENT_COUNT);
     JsonArray items = doc["items"].as<JsonArray>();
     for (int i = 0 ; i < items.size() ; i++) {
+        Serial.print(" item =  ");
+        Serial.println(i);
         const char *summary = items[i]["summary"];
-        const char *start = items[i]["start"]["dateTime"];
-        const char *end = items[i]["end"]["dateTime"];
-        GoogleCalendarEvent event(summary, start, end);
+        
+        String start = "";
+        bool isPeriodEvent = false;
+        const char *datetime = items[i]["start"]["dateTime"];
+        Serial.println(datetime);
+        // datetimeは基本常に!=NULL、なので空文字列で存在チェック
+        if (datetime != NULL && strcmp("", datetime) != 0) {
+            Serial.println("dateTime use(start)");
+            start += (const char *)items[i]["start"]["dateTime"];
+            //strncpy(start, items[i]["start"]["dateTime"], sizeof(start)-1);
+        }
+        else if (items[i]["start"]["date"] != NULL) {
+            isPeriodEvent = true;
+            Serial.println("date use(start)");
+            start += (const char *)items[i]["start"]["date"];
+            //strncpy(start, items[i]["start"]["date"], sizeof(start)-1);
+            //strcat(start, "T00:00:00");
+        }
+        else {
+            Serial.println("no dateTime or date");
+        }
+        Serial.println(start);
+        //char end[30] = {0};
+        String end = "";
+        datetime = items[i]["end"]["dateTime"];
+        if (datetime != NULL && strcmp("", datetime) != 0) {
+            end += (const char *)items[i]["end"]["dateTime"];
+            //strncpy(end, items[i]["end"]["dateTime"], sizeof(end)-1);
+        }
+        else if (items[i]["end"]["date"] != NULL) {
+            Serial.println("date use(end)");
+            end += (const char *)items[i]["end"]["date"];
+            //strncpy(end, items[i]["end"]["date"], sizeof(end)-1);
+            //strcat(end, "T00:00:00");
+        }
+        else {
+            Serial.println("no dateTime or date");
+        }
+        Serial.println(end);
+
+        GoogleCalendarEvent event(summary, start.c_str(), end.c_str(), isPeriodEvent);
 
         eventList->add(event);
     }
