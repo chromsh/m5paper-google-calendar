@@ -2,6 +2,8 @@
 
 Display your google calendar on M5Paper!
 
+![image](https://raw.githubusercontent.com/chromsh/m5paper-google-calendar/docs/m5papger-calendar.jpg)
+
 # Configurations
 
 ## Google Calendar
