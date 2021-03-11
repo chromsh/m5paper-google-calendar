@@ -22,7 +22,6 @@ void generateCalendarStartEnd(struct tm *start, struct tm *end);
 M5EPD_Canvas canvas(&M5.EPD);
 
 void setup() {
-    //fillRect(0, 0, 0)
     M5.begin();
     // 縦向きに変更
     M5.EPD.SetRotation(90);
@@ -30,7 +29,6 @@ void setup() {
     M5.EPD.Clear(true);
     M5.RTC.begin();
     M5.BatteryADCBegin();
-    //delay(500);
 #ifdef USE_SD
     Serial.print("----- loading SD font.ttf ---------");
     esp_err_t err  = canvas.loadFont("/font.ttf", SD);
@@ -45,7 +43,6 @@ void setup() {
     canvas.createCanvas(M5EPD_PANEL_H, M5EPD_PANEL_W);
     canvas.createRender(24);
     canvas.setTextSize(24);
-    //canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
 
     bool connected = MYWIFI::connect(config::WIFI_SSID, config::WIFI_PASSWORD, 10);
     if (!connected) {
@@ -58,11 +55,7 @@ void setup() {
 
     // draw status bar
     StatusBar::draw(&canvas, M5EPD_PANEL_H);
-    // Google
-    // memo buf[1024 * 10]をgetAccessTokenの引数に戻り値として渡すと、
-    // ***ERROR*** A stack overflow in task loopTask has been detected.
-    // となる。
-    // char buf[1024 * 1];
+    // get access token
     Serial.print("before auth");
     DynamicJsonDocument doc = GoogleAuthorization::getAccessToken(config::GOOGLE_REFRESH_TOKEN);
     const char *accessToken = doc["access_token"];
@@ -80,13 +73,6 @@ void setup() {
     // get events
     struct tm start = {0};
     struct tm end = {0};
-    // memo : strptime can't parse timezone.
-    //        JST = UTC+9, 00:00:00 = 15:00:00 in UTC
-    //const char *fmt = "%Y-%m-%dT%H:%M:%S";
-    //strptime("2021-02-06T15:00:00", fmt, &start);
-    //strptime("2021-02-07T15:00:00", fmt, &end);
-    //strptime("2021-02-07T00:00:00", fmt, &start);
-    //strptime("2021-02-08T00:00:00", fmt, &end);
     generateCalendarStartEnd(&start, &end);
     GoogleCalendarEventList *events = GoogleCalendar::getEvents(accessToken, config::GOOGLE_CALENDAR_ID, &start, &end);
 
@@ -96,8 +82,6 @@ void setup() {
         Serial.println("---- ---- ----");
         Serial.println(event->summary());
         // time
-        //canvas.drawString(event->start(), 10, dy);
-        //canvas.drawString(event->end(), 200 + 10, dy);
         if (event->isPeriod()) {
             // 期間予定
             canvas.drawString(event->startEndDatePeriodString(), 10, dy);
@@ -118,7 +102,6 @@ void setup() {
     }
     delete events;
 
-    //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
     // mode must be UPDATE_MODE_GLR16 when draw lines
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU); // 汚い
     canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16); // GL16と同じ
@@ -135,6 +118,7 @@ void setup() {
 void loop() {
     // need delay because drawing canvas is too slow
     delay(1001);
+    // restart after 1hour
     M5.shutdown(60 * 60);
 }
 
@@ -153,7 +137,6 @@ void generateCalendarStartEnd(struct tm *start, struct tm *end) {
     tend += 60 * 60 * 24;
     localtime_r(&tend, end);
 
-    // end = 23:59:59
     end->tm_sec = 59;
     end->tm_min = 59;
     end->tm_hour = 23;
