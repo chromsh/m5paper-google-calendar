@@ -82,7 +82,7 @@ void setup() {
     struct tm end = {0};
     // memo : strptime can't parse timezone.
     //        JST = UTC+9, 00:00:00 = 15:00:00 in UTC
-    const char *fmt = "%Y-%m-%dT%H:%M:%S";
+    //const char *fmt = "%Y-%m-%dT%H:%M:%S";
     //strptime("2021-02-06T15:00:00", fmt, &start);
     //strptime("2021-02-07T15:00:00", fmt, &end);
     //strptime("2021-02-07T00:00:00", fmt, &start);
@@ -120,7 +120,12 @@ void setup() {
 
     //canvas.pushCanvas(0, 0, UPDATE_MODE_DU4);
     // mode must be UPDATE_MODE_GLR16 when draw lines
-    canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16);
+    //canvas.pushCanvas(0, 0, UPDATE_MODE_DU); // 汚い
+    canvas.pushCanvas(0, 0, UPDATE_MODE_GLR16); // GL16と同じ
+    //canvas.pushCanvas(0, 0, UPDATE_MODE_GC16); // 品質悪い
+    //canvas.pushCanvas(0, 0, UPDATE_MODE_GL16); // そこそこきれい
+    //canvas.pushCanvas(0, 0, UPDATE_MODE_GLD16); // GL16と同じに見える
+    //canvas.pushCanvas(0, 0, UPDATE_MODE_A2); // 汚い
     MYWIFI::disconnect();
     Serial.println(" now time ");
     int utime = time(NULL);
@@ -143,8 +148,12 @@ void generateCalendarStartEnd(struct tm *start, struct tm *end) {
     start->tm_min = 0;
     start->tm_hour = 0;
 
+    // 1日後の23:59:59を作る
+    time_t tend = mktime(start);
+    tend += 60 * 60 * 24;
+    localtime_r(&tend, end);
+
     // end = 23:59:59
-    *end = now;
     end->tm_sec = 59;
     end->tm_min = 59;
     end->tm_hour = 23;
