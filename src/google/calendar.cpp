@@ -102,8 +102,6 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
         return NULL;
     }
 
-    //Serial.println(res);
-
     DynamicJsonDocument doc(50000);
     deserializeJson(doc, res);
    
@@ -122,31 +120,24 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
         if (datetime != NULL && strcmp("", datetime) != 0) {
             Serial.println("dateTime use(start)");
             start += (const char *)items[i]["start"]["dateTime"];
-            //strncpy(start, items[i]["start"]["dateTime"], sizeof(start)-1);
         }
         else if (items[i]["start"]["date"] != NULL) {
             isPeriodEvent = true;
             Serial.println("date use(start)");
             start += (const char *)items[i]["start"]["date"];
-            //strncpy(start, items[i]["start"]["date"], sizeof(start)-1);
-            //strcat(start, "T00:00:00");
         }
         else {
             Serial.println("no dateTime or date");
         }
         Serial.println(start);
-        //char end[30] = {0};
         String end = "";
         datetime = items[i]["end"]["dateTime"];
         if (datetime != NULL && strcmp("", datetime) != 0) {
             end += (const char *)items[i]["end"]["dateTime"];
-            //strncpy(end, items[i]["end"]["dateTime"], sizeof(end)-1);
         }
         else if (items[i]["end"]["date"] != NULL) {
             Serial.println("date use(end)");
             end += (const char *)items[i]["end"]["date"];
-            //strncpy(end, items[i]["end"]["date"], sizeof(end)-1);
-            //strcat(end, "T00:00:00");
         }
         else {
             Serial.println("no dateTime or date");
@@ -175,8 +166,6 @@ std::vector<GoogleCalendarListItem> GoogleCalendar::getCalendars(const char *acc
     if (res == "") {
         return calendars;
     }
-
-    //Serial.println(res);
 
     DynamicJsonDocument doc(5000);
     deserializeJson(doc, res);

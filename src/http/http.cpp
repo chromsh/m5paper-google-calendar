@@ -150,6 +150,7 @@ String MyHTTPClient::post(const char *url, const KeyValues *headers, const KeyVa
 
 // URL encode
 // ref ) https://hardwarefun.com/tutorials/url-encoding-in-arduino
+// notice: This code doesn't comply with rfc specs.
 String urlEncode(const char *val) {
 	const char *hex = "0123456789abcdef";
     int len = strlen(val);
