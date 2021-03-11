@@ -104,7 +104,7 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
 
     //Serial.println(res);
 
-    DynamicJsonDocument doc(5000);
+    DynamicJsonDocument doc(50000);
     deserializeJson(doc, res);
    
     GoogleCalendarEventList *eventList = new GoogleCalendarEventList(MAX_EVENT_COUNT);
