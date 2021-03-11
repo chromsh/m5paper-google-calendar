@@ -42,19 +42,19 @@ Copy `src\config.cpp.sample` to `src\config.cpp` and write your settings.
 - WIFI_SSID
 - WIFI_PASSWORD
 - GOOGLE_REFRESH_TOKEN
--- your refresh token
+    - your refresh token
 - GOOGLE_APP_CLIENT_ID
 - GOOGLE_APP_CLIENT_SECRET
 - GOOGLE_CALENDAR_ID
--- your calendar ID (typically your mail address)
+    - your calendar ID (typically your mail address)
 
 # build and upload
 
 Use VSCode and Platform-IO plugin.
 
 - board
--- m5stack-fire
+    - m5stack-fire
 - dependent libraries
--- M5EPD
--- M5Stack
--- ArduinoJson
+    - M5EPD
+    - M5Stack
+    - ArduinoJson
