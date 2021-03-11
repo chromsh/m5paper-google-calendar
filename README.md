@@ -60,3 +60,10 @@ Use VSCode and Platform-IO plugin.
     - M5EPD
     - M5Stack
     - ArduinoJson
+
+# show wide characters
+
+You need to install a SD card to your TF slot.
+Your SD card must have `font.ttf` file in the root directory.
+
+ex) [IPAex fornt](https://moji.or.jp/ipafont/)
