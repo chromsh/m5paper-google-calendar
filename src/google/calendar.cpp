@@ -92,6 +92,7 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
     data.add("maxResults", String(MAX_EVENT_COUNT));
     data.add("orderBy", "startTime");
     data.add("singleEvents", "true");
+    data.add("maxAttendees", "1");
     //data.add("timeZone", "Asia/Tokyo");
 
     String url = GOOGLE_CALENDAR_EVENT_LIST_PREFIX + String(calendarId) + GOOGLE_CALENDAR_EVENT_LIST_POSTFIX;
