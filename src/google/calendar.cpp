@@ -98,16 +98,29 @@ GoogleCalendarEventList *GoogleCalendar::getEvents(const char *accessToken, cons
     String url = GOOGLE_CALENDAR_EVENT_LIST_PREFIX + String(calendarId) + GOOGLE_CALENDAR_EVENT_LIST_POSTFIX;
     Serial.println(url);
     String res = client.get(url.c_str(), &headers, &data);
+    //Serial.println("res is ");
+    //Serial.println(res);
 
     if (res == "") {
         return NULL;
     }
-
-    DynamicJsonDocument doc(50000);
-    deserializeJson(doc, res);
+    Serial.println("parse json");
+    DynamicJsonDocument doc(35000);
+    Serial.println(String("doc capacity() = ") + doc.capacity());
+    DeserializationError error = deserializeJson(doc, res);
+    Serial.println("deserialized json");
+    if (error) {
+        Serial.println("deserializeJson() failed");
+        Serial.println(error.c_str());
+    }
+    if (doc.overflowed()) { 
+        Serial.println(" overflowed ");
+    }
+    Serial.println(String("memoryUsage = ") + doc.memoryUsage());
    
     GoogleCalendarEventList *eventList = new GoogleCalendarEventList(MAX_EVENT_COUNT);
     JsonArray items = doc["items"].as<JsonArray>();
+    Serial.println(String("item size = ") + items.size());
     for (int i = 0 ; i < items.size() ; i++) {
         Serial.print(" item =  ");
         Serial.println(i);
